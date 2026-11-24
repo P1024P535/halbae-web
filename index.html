@@ -235,6 +235,8 @@ html[lang="ja"] .hint,html[lang="zh-CN"] .hint{font-size:12px}
 .seg button{flex:1;min-width:0;border:0;background:none;padding:7px 4px;font-family:var(--font-ui);font-size:14px;color:var(--panel-text);cursor:pointer}
 .seg button+button{border-left:1px solid var(--steel-lo)}
 .seg button[aria-pressed="true"]{background:linear-gradient(180deg,#ffd9a8,#ffb347);color:#5a2600;font-weight:700}
+.lb-pure{margin-inline-start:4px;font-size:.9em}
+.lb-note{margin:8px 0 0;text-align:center;font-size:12px;opacity:.75}
 .rw-btn{position:fixed;left:50%;bottom:calc(16% + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;width:auto;max-width:92vw;flex:none;white-space:nowrap;word-break:keep-all;animation:rwPop .35s ease-out}
 .rw-btn[hidden]{display:none}
 @keyframes rwPop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
@@ -758,10 +760,10 @@ const HB_LANG_EXTRA = {
   }
 };
 const HB_CYCLE_T = {
-  ko: { 'rw.ad': '📺 광고 보고 {n}층으로 되돌리기', 'rw.free': '↩ {n}층으로 되돌리기', 'rw.done': '어이쿠, 다시 여기구먼!', 'rw.fail': '광고를 못 불러왔어. 그냥 올라가자!', 'shop.wear': '무지개 모자', 'shop.note': '광고 없이 되돌리기 + 무지개 털모자·뚫어뻥', 'shop.buy': '광고 제거 + 무지개 모자 {p}', 'shop.restore': '구매 복원', 'shop.restoring': '구매 내역을 확인하는 중…', 'shop.restored': '구매를 복원했어요!', 'shop.none': '복원할 구매가 없어요.', 'shop.fail': '결제가 완료되지 않았어요.', 'cyc.n': '{n}회차', 'cyc.badge': '{n}회차', 'cyc.clear': '{n}회차 클리어!', 'cyc.next': '{n}회차 도전', 'cyc.max': '최종 3회차까지 완료!', 'cyc.unlock2': '2회차 개방: 파란 털모자와 파란 뚫어뻥!', 'cyc.unlock3': '3회차 개방: 황금 털모자와 황금 뚫어뻥!', 'btn.board': '순위표', 'lb.title': '순위표', 'lb.name': '이름', 'lb.time': '기록', 'lb.run': '회차', 'lb.empty': '아직 기록이 없어요. 한 층이라도 올라가 보세요!', 'lb.floor': '{n}층 도전 중', 'lb.anon': '할배', 'prof.bad': '다른 닉네임을 써 주세요.', 'prof.taken': '이미 누가 쓰는 닉네임이에요. 다른 이름을 써 주세요.', 'lb.loading': '불러오는 중…', 'lb.global': '전체 순위 (접속자 공유)', 'lb.localonly': '내 기기 기록 (이 기기에 저장)', 'prof.title': '기록 등록', 'prof.intro': '순위표에 올릴 닉네임과 국가를 정해 주세요.', 'prof.name': '닉네임', 'prof.nameph': '할배123', 'prof.country': '국가', 'prof.save': '저장', 'prof.skip': '나중에', 'prof.edit': '이름·국가 수정' },
-  en: { 'rw.ad': '📺 Watch an ad: back to floor {n}', 'rw.free': '↩ Back to floor {n}', 'rw.done': 'Phew, right back where I was!', 'rw.fail': 'No ad right now. Just keep climbing!', 'shop.wear': 'Rainbow hat', 'shop.note': 'Rewind without ads + rainbow beanie & plunger', 'shop.buy': 'Remove ads + rainbow hat {p}', 'shop.restore': 'Restore purchase', 'shop.restoring': 'Checking your purchases…', 'shop.restored': 'Purchase restored!', 'shop.none': 'No purchase to restore.', 'shop.fail': 'The purchase did not go through.', 'cyc.n': 'Run {n}', 'cyc.badge': 'Run {n}', 'cyc.clear': 'Run {n} cleared!', 'cyc.next': 'Start Run {n}', 'cyc.max': 'All 3 runs cleared!', 'cyc.unlock2': 'Run 2 unlocked: blue beanie & blue plunger!', 'cyc.unlock3': 'Run 3 unlocked: golden beanie & golden plunger!', 'btn.board': 'Ranking', 'lb.title': 'Ranking', 'lb.name': 'Name', 'lb.time': 'Time', 'lb.run': 'Run', 'lb.empty': 'No records yet. Climb a floor or two!', 'lb.floor': 'Floor {n}…', 'lb.anon': 'Grandpa', 'prof.bad': 'Please pick a different nickname.', 'prof.taken': 'Someone already uses this nickname. Please pick another.', 'lb.loading': 'Loading…', 'lb.global': 'Global ranking (shared)', 'lb.localonly': 'Your device records (saved on this device)', 'prof.title': 'Register', 'prof.intro': 'Pick a nickname and country for the ranking.', 'prof.name': 'Nickname', 'prof.nameph': 'Grandpa123', 'prof.country': 'Country', 'prof.save': 'Save', 'prof.skip': 'Later', 'prof.edit': 'Edit name & country' },
-  ja: { 'rw.ad': '📺 広告を見て{n}階に戻る', 'rw.free': '↩ {n}階に戻る', 'rw.done': 'やれやれ、元の場所じゃ!', 'rw.fail': '広告を読み込めんかった。このまま登ろう!', 'shop.wear': '虹色の帽子', 'shop.note': '広告なしで戻れる + 虹色ニット帽・スッポン', 'shop.buy': '広告なし + 虹色の帽子 {p}', 'shop.restore': '購入を復元', 'shop.restoring': '購入履歴を確認中…', 'shop.restored': '購入を復元しました!', 'shop.none': '復元できる購入はありません。', 'shop.fail': '購入が完了しませんでした。', 'cyc.n': '{n}周目', 'cyc.badge': '{n}周目', 'cyc.clear': '{n}周目クリア!', 'cyc.next': '{n}周目に挑戦', 'cyc.max': '最終3周目までクリア!', 'cyc.unlock2': '2周目解放:青いニット帽と青いスッポン!', 'cyc.unlock3': '3周目解放:金のニット帽と金のスッポン!', 'btn.board': 'ランキング', 'lb.title': 'ランキング', 'lb.name': '名前', 'lb.time': 'タイム', 'lb.run': '周目', 'lb.empty': 'まだ記録がありません。まずは一階でも登ろう!', 'lb.floor': '{n}階 挑戦中', 'lb.anon': 'じいさん', 'prof.bad': '別のニックネームにしてください。', 'prof.taken': 'そのニックネームはすでに使われています。別の名前にしてください。', 'lb.loading': '読み込み中…', 'lb.global': '全体ランキング(共有)', 'lb.localonly': 'この端末の記録(端末に保存)', 'prof.title': '記録登録', 'prof.intro': 'ランキング用のニックネームと国を選んでください。', 'prof.name': 'ニックネーム', 'prof.nameph': 'ジイ123', 'prof.country': '国', 'prof.save': '保存', 'prof.skip': 'あとで', 'prof.edit': '名前・国を編集' },
-  zh: { 'rw.ad': '📺 看广告回到{n}层', 'rw.free': '↩ 回到{n}层', 'rw.done': '哎哟,又回来了!', 'rw.fail': '广告没加载出来,接着爬吧!', 'shop.wear': '彩虹帽', 'shop.note': '无广告回退 + 彩虹毛线帽和搋子', 'shop.buy': '去广告 + 彩虹帽 {p}', 'shop.restore': '恢复购买', 'shop.restoring': '正在查询购买记录…', 'shop.restored': '已恢复购买!', 'shop.none': '没有可恢复的购买。', 'shop.fail': '购买没有完成。', 'cyc.n': '第{n}周目', 'cyc.badge': '第{n}周目', 'cyc.clear': '第{n}周目通关!', 'cyc.next': '挑战第{n}周目', 'cyc.max': '三周目全部通关!', 'cyc.unlock2': '解锁二周目：蓝色毛线帽和蓝色搋子！', 'cyc.unlock3': '解锁三周目：金色毛线帽和金色搋子！', 'btn.board': '排行榜', 'lb.title': '排行榜', 'lb.name': '名字', 'lb.time': '用时', 'lb.run': '周目', 'lb.empty': '还没有记录。先爬一层试试吧！', 'lb.floor': '{n}楼 挑战中', 'lb.anon': '大爷', 'prof.bad': '请换一个名字。', 'prof.taken': '这个昵称已经有人用了,请换一个。', 'lb.loading': '加载中…', 'lb.global': '全服排行（共享）', 'lb.localonly': '本机记录（保存在本机）', 'prof.title': '记录登记', 'prof.intro': '为排行榜选个名字和国家吧。', 'prof.name': '名字', 'prof.nameph': '大爷123', 'prof.country': '国家', 'prof.save': '保存', 'prof.skip': '稍后', 'prof.edit': '修改名字和国家' }
+  ko: { 'rw.ad': '📺 광고 보고 {n}층으로 ({k}번 남음)', 'rw.free': '↩ {n}층으로 되돌리기 ({k}번 남음)', 'lb.pure': '정공법: 되돌리기 없이 깬 기록', 'rw.done': '어이쿠, 다시 여기구먼!', 'rw.fail': '광고를 못 불러왔어. 그냥 올라가자!', 'shop.wear': '무지개 모자', 'shop.note': '광고 없이 되돌리기 + 무지개 털모자·뚫어뻥', 'shop.buy': '광고 제거 + 무지개 모자 {p}', 'shop.restore': '구매 복원', 'shop.restoring': '구매 내역을 확인하는 중…', 'shop.restored': '구매를 복원했어요!', 'shop.none': '복원할 구매가 없어요.', 'shop.fail': '결제가 완료되지 않았어요.', 'cyc.n': '{n}회차', 'cyc.badge': '{n}회차', 'cyc.clear': '{n}회차 클리어!', 'cyc.next': '{n}회차 도전', 'cyc.max': '최종 3회차까지 완료!', 'cyc.unlock2': '2회차 개방: 파란 털모자와 파란 뚫어뻥!', 'cyc.unlock3': '3회차 개방: 황금 털모자와 황금 뚫어뻥!', 'btn.board': '순위표', 'lb.title': '순위표', 'lb.name': '이름', 'lb.time': '기록', 'lb.run': '회차', 'lb.empty': '아직 기록이 없어요. 한 층이라도 올라가 보세요!', 'lb.floor': '{n}층 도전 중', 'lb.anon': '할배', 'prof.bad': '다른 닉네임을 써 주세요.', 'prof.taken': '이미 누가 쓰는 닉네임이에요. 다른 이름을 써 주세요.', 'lb.loading': '불러오는 중…', 'lb.global': '전체 순위 (접속자 공유)', 'lb.localonly': '내 기기 기록 (이 기기에 저장)', 'prof.title': '기록 등록', 'prof.intro': '순위표에 올릴 닉네임과 국가를 정해 주세요.', 'prof.name': '닉네임', 'prof.nameph': '할배123', 'prof.country': '국가', 'prof.save': '저장', 'prof.skip': '나중에', 'prof.edit': '이름·국가 수정' },
+  en: { 'rw.ad': '📺 Watch an ad: back to floor {n} ({k} left)', 'rw.free': '↩ Back to floor {n} ({k} left)', 'lb.pure': 'Pure climb: cleared without rewinds', 'rw.done': 'Phew, right back where I was!', 'rw.fail': 'No ad right now. Just keep climbing!', 'shop.wear': 'Rainbow hat', 'shop.note': 'Rewind without ads + rainbow beanie & plunger', 'shop.buy': 'Remove ads + rainbow hat {p}', 'shop.restore': 'Restore purchase', 'shop.restoring': 'Checking your purchases…', 'shop.restored': 'Purchase restored!', 'shop.none': 'No purchase to restore.', 'shop.fail': 'The purchase did not go through.', 'cyc.n': 'Run {n}', 'cyc.badge': 'Run {n}', 'cyc.clear': 'Run {n} cleared!', 'cyc.next': 'Start Run {n}', 'cyc.max': 'All 3 runs cleared!', 'cyc.unlock2': 'Run 2 unlocked: blue beanie & blue plunger!', 'cyc.unlock3': 'Run 3 unlocked: golden beanie & golden plunger!', 'btn.board': 'Ranking', 'lb.title': 'Ranking', 'lb.name': 'Name', 'lb.time': 'Time', 'lb.run': 'Run', 'lb.empty': 'No records yet. Climb a floor or two!', 'lb.floor': 'Floor {n}…', 'lb.anon': 'Grandpa', 'prof.bad': 'Please pick a different nickname.', 'prof.taken': 'Someone already uses this nickname. Please pick another.', 'lb.loading': 'Loading…', 'lb.global': 'Global ranking (shared)', 'lb.localonly': 'Your device records (saved on this device)', 'prof.title': 'Register', 'prof.intro': 'Pick a nickname and country for the ranking.', 'prof.name': 'Nickname', 'prof.nameph': 'Grandpa123', 'prof.country': 'Country', 'prof.save': 'Save', 'prof.skip': 'Later', 'prof.edit': 'Edit name & country' },
+  ja: { 'rw.ad': '📺 広告を見て{n}階に戻る(残り{k}回)', 'rw.free': '↩ {n}階に戻る(残り{k}回)', 'lb.pure': '正攻法:戻らずにクリアした記録', 'rw.done': 'やれやれ、元の場所じゃ!', 'rw.fail': '広告を読み込めんかった。このまま登ろう!', 'shop.wear': '虹色の帽子', 'shop.note': '広告なしで戻れる + 虹色ニット帽・スッポン', 'shop.buy': '広告なし + 虹色の帽子 {p}', 'shop.restore': '購入を復元', 'shop.restoring': '購入履歴を確認中…', 'shop.restored': '購入を復元しました!', 'shop.none': '復元できる購入はありません。', 'shop.fail': '購入が完了しませんでした。', 'cyc.n': '{n}周目', 'cyc.badge': '{n}周目', 'cyc.clear': '{n}周目クリア!', 'cyc.next': '{n}周目に挑戦', 'cyc.max': '最終3周目までクリア!', 'cyc.unlock2': '2周目解放:青いニット帽と青いスッポン!', 'cyc.unlock3': '3周目解放:金のニット帽と金のスッポン!', 'btn.board': 'ランキング', 'lb.title': 'ランキング', 'lb.name': '名前', 'lb.time': 'タイム', 'lb.run': '周目', 'lb.empty': 'まだ記録がありません。まずは一階でも登ろう!', 'lb.floor': '{n}階 挑戦中', 'lb.anon': 'じいさん', 'prof.bad': '別のニックネームにしてください。', 'prof.taken': 'そのニックネームはすでに使われています。別の名前にしてください。', 'lb.loading': '読み込み中…', 'lb.global': '全体ランキング(共有)', 'lb.localonly': 'この端末の記録(端末に保存)', 'prof.title': '記録登録', 'prof.intro': 'ランキング用のニックネームと国を選んでください。', 'prof.name': 'ニックネーム', 'prof.nameph': 'ジイ123', 'prof.country': '国', 'prof.save': '保存', 'prof.skip': 'あとで', 'prof.edit': '名前・国を編集' },
+  zh: { 'rw.ad': '📺 看广告回到{n}层(剩{k}次)', 'rw.free': '↩ 回到{n}层(剩{k}次)', 'lb.pure': '硬核通关:没有用过回退', 'rw.done': '哎哟,又回来了!', 'rw.fail': '广告没加载出来,接着爬吧!', 'shop.wear': '彩虹帽', 'shop.note': '无广告回退 + 彩虹毛线帽和搋子', 'shop.buy': '去广告 + 彩虹帽 {p}', 'shop.restore': '恢复购买', 'shop.restoring': '正在查询购买记录…', 'shop.restored': '已恢复购买!', 'shop.none': '没有可恢复的购买。', 'shop.fail': '购买没有完成。', 'cyc.n': '第{n}周目', 'cyc.badge': '第{n}周目', 'cyc.clear': '第{n}周目通关!', 'cyc.next': '挑战第{n}周目', 'cyc.max': '三周目全部通关!', 'cyc.unlock2': '解锁二周目：蓝色毛线帽和蓝色搋子！', 'cyc.unlock3': '解锁三周目：金色毛线帽和金色搋子！', 'btn.board': '排行榜', 'lb.title': '排行榜', 'lb.name': '名字', 'lb.time': '用时', 'lb.run': '周目', 'lb.empty': '还没有记录。先爬一层试试吧！', 'lb.floor': '{n}楼 挑战中', 'lb.anon': '大爷', 'prof.bad': '请换一个名字。', 'prof.taken': '这个昵称已经有人用了,请换一个。', 'lb.loading': '加载中…', 'lb.global': '全服排行（共享）', 'lb.localonly': '本机记录（保存在本机）', 'prof.title': '记录登记', 'prof.intro': '为排行榜选个名字和国家吧。', 'prof.name': '名字', 'prof.nameph': '大爷123', 'prof.country': '国家', 'prof.save': '保存', 'prof.skip': '稍后', 'prof.edit': '修改名字和国家' }
 };
 for (const code in HB_LANG_EXTRA) {
   const x = HB_LANG_EXTRA[code], base = LANGS[code];
@@ -3519,6 +3521,7 @@ const HBoard = (() => {
   function warm() {}
   const BEST_KEY = 'ddulbbeong-halbae-v1-pb';
   async function submit(rec, force, force2) {
+    if (!force2) noteRewind(0);
     // clears get their own row; an unfinished climb keeps one 'progress' row per 회차 that is updated in place
     const id = rec.cleared === false ? 'prog-' + rec.cycle : 'r' + Date.now() + Math.random().toString(36).slice(2, 6);
     if (rec.cleared !== false) { try { localStorage.setItem(HB_SCORE_KEY, JSON.stringify(localAll().filter(r => r.id !== 'prog-' + rec.cycle))); } catch (_) {} }
@@ -3573,7 +3576,31 @@ const HBoard = (() => {
       return (await res.json()) !== false;
     } catch (_) { return true; }
   }
-  return { warm, submit, top, nameFree, configured: on };
+  // the 🏅 badge: remember (on the server) which runs used a rewind; kept locally until it goes through
+  const RW_PEND = 'ddulbbeong-halbae-rwpend';
+  async function noteRewind(cycle) {
+    let pend = []; try { pend = JSON.parse(localStorage.getItem(RW_PEND) || '[]'); } catch (_) {}
+    if (cycle && !pend.includes(cycle)) pend.push(cycle);
+    if (!on() || !pend.length) { try { localStorage.setItem(RW_PEND, JSON.stringify(pend)); } catch (_) {} return; }
+    const root = HB_SUPABASE.url.replace(/\/$/, '') + '/rest/v1/', left = [];
+    for (const c of pend) {
+      try {
+        const res = await withTimeout(fetch(root + 'rpc/note_rewind', { method: 'POST', headers: headers(), body: JSON.stringify({ p_player_id: hbPlayerId(), p_cycle: c }) }), 6000);
+        if (!res || !(res.ok || res.status === 404)) left.push(c);
+      } catch (_) { left.push(c); }
+    }
+    try { localStorage.setItem(RW_PEND, JSON.stringify(left)); } catch (_) {}
+  }
+  async function rewindFlags() {
+    if (!on()) return null;
+    try {
+      const root = HB_SUPABASE.url.replace(/\/$/, '') + '/rest/v1/';
+      const res = await withTimeout(fetch(root + 'rpc/rewind_flags', { method: 'POST', headers: headers(), body: '{}' }), 6000);
+      if (!res || !res.ok) return null;
+      return new Set((await res.json()).map(x => x.public_id + ':' + x.cycle));
+    } catch (_) { return null; }
+  }
+  return { warm, submit, top, nameFree, noteRewind, rewindFlags, configured: on };
 })();
 
 function hbBaseRec() {
@@ -3645,7 +3672,8 @@ function fmtHMS(sec) {
 async function hbRenderBoard() {
   const body = $('boardBody'); body.setAttribute('aria-busy', 'true');
   body.innerHTML = `<p class="board-load">${T('lb.loading')}</p>`;
-  const { rows, global } = await HBoard.top(30);
+  const [{ rows, global }, used] = await Promise.all([HBoard.top(30), HBoard.rewindFlags()]);
+  for (const r of rows) r.pure = !!used && global && r.cleared !== false && !used.has(r.pid + ':' + (r.cycle || 1));
   $('boardScope').textContent = T(global ? 'lb.global' : 'lb.localonly');
   if (!rows.length) { body.innerHTML = `<p class="board-empty">${T('lb.empty')}</p>`; body.removeAttribute('aria-busy'); return; }
   const head = `<div class="lb-row lb-head"><span>#</span><span>${T('lb.name')}</span><span>${T('lb.time')}</span><span>${T('lb.run')}</span></div>`;
@@ -3653,10 +3681,10 @@ async function hbRenderBoard() {
     const rk = i + 1, medal = rk <= 3 ? ['', '🥇', '🥈', '🥉'][rk] : rk;
     const nm = (r.name || '???').replace(/[<>&]/g, '');
     return `<div class="lb-row${r.mine ? ' mine' : ''}"><span class="lb-rk">${medal}</span>` +
-      `<span class="lb-nm"><span class="lb-fl">${hbFlag(r.country)}</span><span class="lb-dev" title="${r.device || ''}">${HB_DEV_ICON[r.device] || ''}</span>${nm}</span>` +
+      `<span class="lb-nm"><span class="lb-fl">${hbFlag(r.country)}</span><span class="lb-dev" title="${r.device || ''}">${HB_DEV_ICON[r.device] || ''}</span>${nm}${r.pure ? `<span class="lb-pure" title="${T('lb.pure')}">🏅</span>` : ''}</span>` +
       (r.cleared === false ? `<span class="lb-tm lb-prog">${T('lb.floor', { n: r.floor || 1 })}</span>` : `<span class="lb-tm">${fmtHMS(r.timeSec)}</span>`) + `<span class="lb-cy g${r.cycle || 1}">${T('cyc.n', { n: r.cycle || 1 })}</span></div>`;
   }).join('');
-  body.innerHTML = head + rowsHtml;
+  body.innerHTML = head + rowsHtml + (rows.some(r => r.pure) ? `<p class="lb-note">🏅 ${T('lb.pure')}</p>` : '');
   body.removeAttribute('aria-busy');
 }
 function hbOpenBoard() {
@@ -3787,6 +3815,7 @@ function updateHud(dt) {
 // the game only asks window.HbNative (added by the Android app); the web and PC versions never show this
 const HB_RW_MIN = 1600; // offer it after falling 10 floors or more
 const HB_RW_SHOW = 8000, HB_RW_GAP = 180000; // the button stays 8 s, then rests 3 min before it can show again
+const HB_RW_MAX = 3, HB_RW_TOPFL = 30; // 3 rewinds per run, and none for falls that start above the 30th floor
 const hbRw = { cp: null, target: null, until: 0, busy: false, el: null, next: 0, still: 0 };
 if (HB_DEBUG) window.__hbRw = hbRw;
 function hbRwBtn() {
@@ -3809,10 +3838,11 @@ function hbRwTick() {
 }
 function hbRwOffer() {
   if (!window.HbNative || !hbRw.cp || hbRw.busy || S.won) return;
-  if (S.B.y - hbRw.cp.y < HB_RW_MIN || performance.now() < hbRw.next) return;
+  if (S.B.y - hbRw.cp.y < HB_RW_MIN || performance.now() < hbRw.next || (S.rw || 0) >= HB_RW_MAX) return;
+  const fl = Math.min(TOP_FLOOR, Math.floor(Math.max(0, -(hbRw.cp.y + R)) / UNIT_PER_M / 3.2) + 1); // same as the HUD
+  if (fl > HB_RW_TOPFL) return; // the last 20 floors are climbed for real
   hbRw.target = Object.assign({}, hbRw.cp); hbRw.until = performance.now() + HB_RW_SHOW; hbRw.next = performance.now() + HB_RW_GAP;
-  const fl = Math.min(TOP_FLOOR, Math.floor(Math.max(0, -(hbRw.target.y + R)) / UNIT_PER_M / 3.2) + 1); // same as the HUD
-  hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl });
+  hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl, k: HB_RW_MAX - (S.rw || 0) });
   hbRw.el.hidden = false;
 }
 function hbNoAdsOwned() { return hbOwnRainbow; }
@@ -3823,13 +3853,14 @@ async function hbRwUse() {
   if (!ok) { try { ok = await window.HbNative.rewardAd(); } catch (_) { ok = false; } }
   hbRw.busy = false; hbRw.el.disabled = false; hbRwHide();
   if (!ok) { say(T('rw.fail'), 2.6); return; }
+  S.rw = (S.rw || 0) + 1; HBoard.noteRewind(S.cycle || 1);
   S.B.x = t.x; S.B.y = t.y; S.V.x = S.V.y = 0; S.O.x = t.ox; S.O.y = t.oy; aim.x = S.O.x; aim.y = S.O.y;
   S.stuck = false; S.stuckPoly = null;
   resolve(S.B, R, null);
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y; resolve(S.tip, TR, null);
   S.airborne = false; S.topY = S.B.y; cam.x = S.B.x; cam.y = S.B.y;
   burst('dust', S.B.x, S.B.y + R, 10, { angle: -Math.PI / 2, spread: Math.PI * 1.4, speed: 120, size: 7, life: 0.8, jx: 30 });
-  say(T('rw.done'), 2.8);
+  say(T('rw.done'), 2.8); save();
 }
 // called by the app when a purchase arrives or is restored
 window.hbGrant = key => {
@@ -3842,7 +3873,7 @@ window.hbOwned = keys => { if (keys && keys.includes('noads') && !hbOwnRainbow) 
 // ---------- save ----------
 const KEY = 'ddulbbeong-halbae-v1';
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify({ B: S.B, O: S.O, time: S.time, falls: S.falls, best: S.best, won: S.won, bestTime: S.bestTime, seen: S.seen, cycle: S.cycle, top: TOP_FLOOR })); } catch (_) {}
+  try { localStorage.setItem(KEY, JSON.stringify({ B: S.B, O: S.O, time: S.time, falls: S.falls, rw: S.rw || 0, best: S.best, won: S.won, bestTime: S.bestTime, seen: S.seen, cycle: S.cycle, top: TOP_FLOOR })); } catch (_) {}
 }
 function loadSave() {
   try {
@@ -3859,7 +3890,7 @@ function loadSave() {
 function resetRun() {
   S.B.x = START_X; S.B.y = -R; S.V.x = S.V.y = 0; S.O.x = 46; S.O.y = -66; aim.x = S.O.x; aim.y = S.O.y;
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y;
-  S.stuck = false; S.stuckPoly = null; S.time = 0; S.falls = 0; S.won = false; S.seen = {}; S.airborne = false; S.topY = S.B.y; S.tilt = 0;
+  S.stuck = false; S.stuckPoly = null; S.time = 0; S.falls = 0; S.rw = 0; S.won = false; S.seen = {}; S.airborne = false; S.topY = S.B.y; S.tilt = 0;
   cam.x = S.B.x; cam.y = S.B.y; floaters.length = 0; parts.length = 0; bubble = null; flushText = 0;
 }
 function restore(d) {
@@ -3867,7 +3898,7 @@ function restore(d) {
   S.B.x = d.B.x; S.B.y = d.B.y; S.O.x = d.O.x; S.O.y = d.O.y; aim.x = S.O.x; aim.y = S.O.y;
   resolve(S.B, R, null); // the level may have changed since this was saved
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y; resolve(S.tip, TR, null);
-  S.time = d.time || 0; S.falls = d.falls || 0; S.best = d.best || 0; S.won = !!d.won; S.bestTime = d.bestTime || null; S.seen = d.seen || {}; S.cycle = Math.min(HB_CYCLE_MAX, Math.max(1, d.cycle || 1));
+  S.time = d.time || 0; S.falls = d.falls || 0; S.rw = d.rw || 0; S.best = d.best || 0; S.won = !!d.won; S.bestTime = d.bestTime || null; S.seen = d.seen || {}; S.cycle = Math.min(HB_CYCLE_MAX, Math.max(1, d.cycle || 1));
   S.topY = S.B.y; cam.x = S.B.x; cam.y = S.B.y;
 }
 function begin() {
