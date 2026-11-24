@@ -235,6 +235,12 @@ html[lang="ja"] .hint,html[lang="zh-CN"] .hint{font-size:12px}
 .seg button{flex:1;min-width:0;border:0;background:none;padding:7px 4px;font-family:var(--font-ui);font-size:14px;color:var(--panel-text);cursor:pointer}
 .seg button+button{border-left:1px solid var(--steel-lo)}
 .seg button[aria-pressed="true"]{background:linear-gradient(180deg,#ffd9a8,#ffb347);color:#5a2600;font-weight:700}
+.rw-btn{position:fixed;left:50%;bottom:calc(16% + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;width:auto;max-width:92vw;flex:none;white-space:nowrap;word-break:keep-all;animation:rwPop .35s ease-out}
+.rw-btn[hidden]{display:none}
+@keyframes rwPop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.rw-btn{animation:none}}
+.shop{margin:4px 0 10px;padding-top:10px;border-top:1px solid var(--steel-lo)}
+.linkbtn{display:block;margin:8px auto 0;background:none;border:0;padding:8px 10px;min-height:40px;font-family:var(--font-ui);font-size:13px;color:var(--panel-text);text-decoration:underline;cursor:pointer}
 .set-note{margin:-6px 0 12px;font-size:12px;line-height:1.4;color:var(--panel-text);opacity:.8;min-height:1.4em}
 .cred-card{max-width:460px}
 .cred{max-height:min(54vh,520px);overflow-y:auto;margin:10px 0 14px;text-align:left;font-family:var(--font-ui);font-size:14px;line-height:1.5;padding-right:6px}
@@ -389,6 +395,12 @@ html[lang="ja"] .hint,html[lang="zh-CN"] .hint{font-size:12px}
     <p class="set-note" id="sNote"></p>
     <div class="set-row"><span data-i18n="s.fx">흔들림·번쩍임</span><div class="seg" id="sFx"><button type="button" data-v="on" data-i18n="s.on">켜기</button><button type="button" data-v="off" data-i18n="s.off">끄기</button></div></div>
     <div class="set-row" id="sFsRow"><span data-i18n="s.fs">전체 화면</span><div class="seg" id="sFs"><button type="button" data-v="on" data-i18n="s.on">켜기</button><button type="button" data-v="off" data-i18n="s.off">끄기</button></div></div>
+    <div class="set-row" id="sRbRow" hidden><span data-i18n="shop.wear">무지개 모자</span><div class="seg" id="sRb"><button type="button" data-v="on" data-i18n="s.on">켜기</button><button type="button" data-v="off" data-i18n="s.off">끄기</button></div></div>
+    <div class="shop" id="sShop" hidden>
+      <p class="set-note" id="sShopNote" data-i18n="shop.note">광고 없이 되돌리기 + 무지개 털모자·뚫어뻥</p>
+      <div class="row"><button class="call" id="bBuy" type="button"><span class="dot"></span><span id="bBuyL"></span></button></div>
+      <button class="linkbtn" id="bRestore" type="button" data-i18n="shop.restore">구매 복원</button>
+    </div>
     <div class="row"><button class="call" id="bSetClose" type="button"><span class="dot"></span><span data-i18n="s.close">닫기</span></button></div>
   </article>
 </div>
@@ -746,10 +758,10 @@ const HB_LANG_EXTRA = {
   }
 };
 const HB_CYCLE_T = {
-  ko: { 'cyc.n': '{n}회차', 'cyc.badge': '{n}회차', 'cyc.clear': '{n}회차 클리어!', 'cyc.next': '{n}회차 도전', 'cyc.max': '최종 3회차까지 완료!', 'cyc.unlock2': '2회차 개방: 파란 털모자와 파란 뚫어뻥!', 'cyc.unlock3': '3회차 개방: 황금 털모자와 황금 뚫어뻥!', 'btn.board': '순위표', 'lb.title': '순위표', 'lb.name': '이름', 'lb.time': '기록', 'lb.run': '회차', 'lb.empty': '아직 기록이 없어요. 한 층이라도 올라가 보세요!', 'lb.floor': '{n}층 도전 중', 'lb.anon': '할배', 'prof.bad': '다른 닉네임을 써 주세요.', 'lb.loading': '불러오는 중…', 'lb.global': '전체 순위 (접속자 공유)', 'lb.localonly': '내 기기 기록 (이 기기에 저장)', 'prof.title': '기록 등록', 'prof.intro': '순위표에 올릴 닉네임과 국가를 정해 주세요.', 'prof.name': '닉네임', 'prof.nameph': '할배123', 'prof.country': '국가', 'prof.save': '저장', 'prof.skip': '나중에', 'prof.edit': '이름·국가 수정' },
-  en: { 'cyc.n': 'Run {n}', 'cyc.badge': 'Run {n}', 'cyc.clear': 'Run {n} cleared!', 'cyc.next': 'Start Run {n}', 'cyc.max': 'All 3 runs cleared!', 'cyc.unlock2': 'Run 2 unlocked: blue beanie & blue plunger!', 'cyc.unlock3': 'Run 3 unlocked: golden beanie & golden plunger!', 'btn.board': 'Ranking', 'lb.title': 'Ranking', 'lb.name': 'Name', 'lb.time': 'Time', 'lb.run': 'Run', 'lb.empty': 'No records yet. Climb a floor or two!', 'lb.floor': 'Floor {n}…', 'lb.anon': 'Grandpa', 'prof.bad': 'Please pick a different nickname.', 'lb.loading': 'Loading…', 'lb.global': 'Global ranking (shared)', 'lb.localonly': 'Your device records (saved on this device)', 'prof.title': 'Register', 'prof.intro': 'Pick a nickname and country for the ranking.', 'prof.name': 'Nickname', 'prof.nameph': 'Grandpa123', 'prof.country': 'Country', 'prof.save': 'Save', 'prof.skip': 'Later', 'prof.edit': 'Edit name & country' },
-  ja: { 'cyc.n': '{n}周目', 'cyc.badge': '{n}周目', 'cyc.clear': '{n}周目クリア!', 'cyc.next': '{n}周目に挑戦', 'cyc.max': '最終3周目までクリア!', 'cyc.unlock2': '2周目解放:青いニット帽と青いスッポン!', 'cyc.unlock3': '3周目解放:金のニット帽と金のスッポン!', 'btn.board': 'ランキング', 'lb.title': 'ランキング', 'lb.name': '名前', 'lb.time': 'タイム', 'lb.run': '周目', 'lb.empty': 'まだ記録がありません。まずは一階でも登ろう!', 'lb.floor': '{n}階 挑戦中', 'lb.anon': 'じいさん', 'prof.bad': '別のニックネームにしてください。', 'lb.loading': '読み込み中…', 'lb.global': '全体ランキング(共有)', 'lb.localonly': 'この端末の記録(端末に保存)', 'prof.title': '記録登録', 'prof.intro': 'ランキング用のニックネームと国を選んでください。', 'prof.name': 'ニックネーム', 'prof.nameph': 'ジイ123', 'prof.country': '国', 'prof.save': '保存', 'prof.skip': 'あとで', 'prof.edit': '名前・国を編集' },
-  zh: { 'cyc.n': '第{n}周目', 'cyc.badge': '第{n}周目', 'cyc.clear': '第{n}周目通关!', 'cyc.next': '挑战第{n}周目', 'cyc.max': '三周目全部通关!', 'cyc.unlock2': '解锁二周目：蓝色毛线帽和蓝色搋子！', 'cyc.unlock3': '解锁三周目：金色毛线帽和金色搋子！', 'btn.board': '排行榜', 'lb.title': '排行榜', 'lb.name': '名字', 'lb.time': '用时', 'lb.run': '周目', 'lb.empty': '还没有记录。先爬一层试试吧！', 'lb.floor': '{n}楼 挑战中', 'lb.anon': '大爷', 'prof.bad': '请换一个名字。', 'lb.loading': '加载中…', 'lb.global': '全服排行（共享）', 'lb.localonly': '本机记录（保存在本机）', 'prof.title': '记录登记', 'prof.intro': '为排行榜选个名字和国家吧。', 'prof.name': '名字', 'prof.nameph': '大爷123', 'prof.country': '国家', 'prof.save': '保存', 'prof.skip': '稍后', 'prof.edit': '修改名字和国家' }
+  ko: { 'rw.ad': '📺 광고 보고 {n}층으로 되돌리기', 'rw.free': '↩ {n}층으로 되돌리기', 'rw.done': '어이쿠, 다시 여기구먼!', 'rw.fail': '광고를 못 불러왔어. 그냥 올라가자!', 'shop.wear': '무지개 모자', 'shop.note': '광고 없이 되돌리기 + 무지개 털모자·뚫어뻥', 'shop.buy': '광고 제거 + 무지개 모자 {p}', 'shop.restore': '구매 복원', 'shop.restoring': '구매 내역을 확인하는 중…', 'shop.restored': '구매를 복원했어요!', 'shop.none': '복원할 구매가 없어요.', 'shop.fail': '결제가 완료되지 않았어요.', 'cyc.n': '{n}회차', 'cyc.badge': '{n}회차', 'cyc.clear': '{n}회차 클리어!', 'cyc.next': '{n}회차 도전', 'cyc.max': '최종 3회차까지 완료!', 'cyc.unlock2': '2회차 개방: 파란 털모자와 파란 뚫어뻥!', 'cyc.unlock3': '3회차 개방: 황금 털모자와 황금 뚫어뻥!', 'btn.board': '순위표', 'lb.title': '순위표', 'lb.name': '이름', 'lb.time': '기록', 'lb.run': '회차', 'lb.empty': '아직 기록이 없어요. 한 층이라도 올라가 보세요!', 'lb.floor': '{n}층 도전 중', 'lb.anon': '할배', 'prof.bad': '다른 닉네임을 써 주세요.', 'prof.taken': '이미 누가 쓰는 닉네임이에요. 다른 이름을 써 주세요.', 'lb.loading': '불러오는 중…', 'lb.global': '전체 순위 (접속자 공유)', 'lb.localonly': '내 기기 기록 (이 기기에 저장)', 'prof.title': '기록 등록', 'prof.intro': '순위표에 올릴 닉네임과 국가를 정해 주세요.', 'prof.name': '닉네임', 'prof.nameph': '할배123', 'prof.country': '국가', 'prof.save': '저장', 'prof.skip': '나중에', 'prof.edit': '이름·국가 수정' },
+  en: { 'rw.ad': '📺 Watch an ad: back to floor {n}', 'rw.free': '↩ Back to floor {n}', 'rw.done': 'Phew, right back where I was!', 'rw.fail': 'No ad right now. Just keep climbing!', 'shop.wear': 'Rainbow hat', 'shop.note': 'Rewind without ads + rainbow beanie & plunger', 'shop.buy': 'Remove ads + rainbow hat {p}', 'shop.restore': 'Restore purchase', 'shop.restoring': 'Checking your purchases…', 'shop.restored': 'Purchase restored!', 'shop.none': 'No purchase to restore.', 'shop.fail': 'The purchase did not go through.', 'cyc.n': 'Run {n}', 'cyc.badge': 'Run {n}', 'cyc.clear': 'Run {n} cleared!', 'cyc.next': 'Start Run {n}', 'cyc.max': 'All 3 runs cleared!', 'cyc.unlock2': 'Run 2 unlocked: blue beanie & blue plunger!', 'cyc.unlock3': 'Run 3 unlocked: golden beanie & golden plunger!', 'btn.board': 'Ranking', 'lb.title': 'Ranking', 'lb.name': 'Name', 'lb.time': 'Time', 'lb.run': 'Run', 'lb.empty': 'No records yet. Climb a floor or two!', 'lb.floor': 'Floor {n}…', 'lb.anon': 'Grandpa', 'prof.bad': 'Please pick a different nickname.', 'prof.taken': 'Someone already uses this nickname. Please pick another.', 'lb.loading': 'Loading…', 'lb.global': 'Global ranking (shared)', 'lb.localonly': 'Your device records (saved on this device)', 'prof.title': 'Register', 'prof.intro': 'Pick a nickname and country for the ranking.', 'prof.name': 'Nickname', 'prof.nameph': 'Grandpa123', 'prof.country': 'Country', 'prof.save': 'Save', 'prof.skip': 'Later', 'prof.edit': 'Edit name & country' },
+  ja: { 'rw.ad': '📺 広告を見て{n}階に戻る', 'rw.free': '↩ {n}階に戻る', 'rw.done': 'やれやれ、元の場所じゃ!', 'rw.fail': '広告を読み込めんかった。このまま登ろう!', 'shop.wear': '虹色の帽子', 'shop.note': '広告なしで戻れる + 虹色ニット帽・スッポン', 'shop.buy': '広告なし + 虹色の帽子 {p}', 'shop.restore': '購入を復元', 'shop.restoring': '購入履歴を確認中…', 'shop.restored': '購入を復元しました!', 'shop.none': '復元できる購入はありません。', 'shop.fail': '購入が完了しませんでした。', 'cyc.n': '{n}周目', 'cyc.badge': '{n}周目', 'cyc.clear': '{n}周目クリア!', 'cyc.next': '{n}周目に挑戦', 'cyc.max': '最終3周目までクリア!', 'cyc.unlock2': '2周目解放:青いニット帽と青いスッポン!', 'cyc.unlock3': '3周目解放:金のニット帽と金のスッポン!', 'btn.board': 'ランキング', 'lb.title': 'ランキング', 'lb.name': '名前', 'lb.time': 'タイム', 'lb.run': '周目', 'lb.empty': 'まだ記録がありません。まずは一階でも登ろう!', 'lb.floor': '{n}階 挑戦中', 'lb.anon': 'じいさん', 'prof.bad': '別のニックネームにしてください。', 'prof.taken': 'そのニックネームはすでに使われています。別の名前にしてください。', 'lb.loading': '読み込み中…', 'lb.global': '全体ランキング(共有)', 'lb.localonly': 'この端末の記録(端末に保存)', 'prof.title': '記録登録', 'prof.intro': 'ランキング用のニックネームと国を選んでください。', 'prof.name': 'ニックネーム', 'prof.nameph': 'ジイ123', 'prof.country': '国', 'prof.save': '保存', 'prof.skip': 'あとで', 'prof.edit': '名前・国を編集' },
+  zh: { 'rw.ad': '📺 看广告回到{n}层', 'rw.free': '↩ 回到{n}层', 'rw.done': '哎哟,又回来了!', 'rw.fail': '广告没加载出来,接着爬吧!', 'shop.wear': '彩虹帽', 'shop.note': '无广告回退 + 彩虹毛线帽和搋子', 'shop.buy': '去广告 + 彩虹帽 {p}', 'shop.restore': '恢复购买', 'shop.restoring': '正在查询购买记录…', 'shop.restored': '已恢复购买!', 'shop.none': '没有可恢复的购买。', 'shop.fail': '购买没有完成。', 'cyc.n': '第{n}周目', 'cyc.badge': '第{n}周目', 'cyc.clear': '第{n}周目通关!', 'cyc.next': '挑战第{n}周目', 'cyc.max': '三周目全部通关!', 'cyc.unlock2': '解锁二周目：蓝色毛线帽和蓝色搋子！', 'cyc.unlock3': '解锁三周目：金色毛线帽和金色搋子！', 'btn.board': '排行榜', 'lb.title': '排行榜', 'lb.name': '名字', 'lb.time': '用时', 'lb.run': '周目', 'lb.empty': '还没有记录。先爬一层试试吧！', 'lb.floor': '{n}楼 挑战中', 'lb.anon': '大爷', 'prof.bad': '请换一个名字。', 'prof.taken': '这个昵称已经有人用了,请换一个。', 'lb.loading': '加载中…', 'lb.global': '全服排行（共享）', 'lb.localonly': '本机记录（保存在本机）', 'prof.title': '记录登记', 'prof.intro': '为排行榜选个名字和国家吧。', 'prof.name': '名字', 'prof.nameph': '大爷123', 'prof.country': '国家', 'prof.save': '保存', 'prof.skip': '稍后', 'prof.edit': '修改名字和国家' }
 };
 for (const code in HB_LANG_EXTRA) {
   const x = HB_LANG_EXTRA[code], base = LANGS[code];
@@ -1521,6 +1533,7 @@ function step(h) {
 }
 function onFall(drop) {
   S.falls++;
+  hbRwOffer();
   sfx.flush();
   burst('drop', S.B.x, S.B.y, 16, { angle: -Math.PI / 2, spread: 2.6, speed: 330, size: 4, life: 1 });
   if (drop > 900) { flushText = 1.6; say(hbLine(drop > 2400 ? 'lines.huge' : 'lines.big'), 3.6); sfx.scream(); }
@@ -2471,7 +2484,11 @@ const HB_CYCLES = [null,
   { handle: ['#ffe9a8', '#e6bf4e', '#8f6c12'], cup: ['#ffd96a', '#e3ab20', '#8f6c10'], edge: '#7a5a0e', light: 'rgba(255,240,180,.7)', collar: '#6b4e0a', hat: { m: '#e8c24e', l: '#ffe79a', b: '#b8912a' } }
 ];
 const HB_CYCLE_MAX = 3;
-function hbCycle() { return HB_CYCLES[Math.min(HB_CYCLE_MAX, Math.max(1, S.cycle || 1))]; }
+// app purchase "광고 제거 + 무지개 모자": a rainbow beanie and a purple plunger, worn on any 회차 when switched on
+const HB_RAINBOW = { handle: ['#fbe3ff', '#c98be0', '#6d3a8c'], cup: ['#e7a8ff', '#a04fd6', '#5a1f86'], edge: '#4a1670', light: 'rgba(235,190,255,.65)', collar: '#3f1460', hat: { m: '#8f5ad6', l: '#ffd166', b: '#5b2a9a', rainbow: ['#ff5f5f', '#ffa24a', '#ffd84a', '#5fd36b', '#4aa8ff', '#9a6bff'] } };
+let hbOwnRainbow = false, hbWearRainbow = true;
+try { hbOwnRainbow = localStorage.getItem('ddulbbeong-halbae-noads') === '1'; hbWearRainbow = localStorage.getItem('ddulbbeong-halbae-rainbow') !== '0'; } catch (_) {}
+function hbCycle() { return hbOwnRainbow && hbWearRainbow ? HB_RAINBOW : HB_CYCLES[Math.min(HB_CYCLE_MAX, Math.max(1, S.cycle || 1))]; }
 const rimLight = { side: 1, col: '#fffbe8', a: 0.4 }; // rim light on the grandpa, from the sun (right) or the moon (left)
 // The body is drawn bigger than its collision circle and grows upward from the feet, so the slippers still
 // stand on the ground. This maps a point in the drawing's local space to the world (same transform as drawPlayer).
@@ -2714,7 +2731,8 @@ function drawGrandpaHead(t, mood, look, flap) {
     ctx.bezierCurveTo(hx - 16.5, hy - 24, hx - 8, hy - 30, hx, hy - 30);
     ctx.bezierCurveTo(hx + 8, hy - 30, hx + 16.5, hy - 24, hx + 15.5, cy);
     ctx.closePath();
-    const g = ctx.createLinearGradient(hx - 14, hy - 30, hx + 14, cy); g.addColorStop(0, hat.l); g.addColorStop(1, hat.m);
+    const g = ctx.createLinearGradient(hx - 14, hy - 30, hx + 14, cy);
+    if (hat.rainbow) hat.rainbow.forEach((c, i, a) => g.addColorStop(i / (a.length - 1), c)); else { g.addColorStop(0, hat.l); g.addColorStop(1, hat.m); }
     ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.stroke();
     ctx.save(); ctx.clip(); ctx.strokeStyle = hat.b; ctx.lineWidth = 0.9;
     for (let i = -4; i <= 4; i++) { const x = hx + i * 3.4; ctx.beginPath(); ctx.moveTo(x, cy); ctx.lineTo(x + flap * 0.3, hy - 30); ctx.stroke(); }
@@ -3500,7 +3518,7 @@ const HBoard = (() => {
   function fromRow(r) { return { name: r.name, country: r.country, device: r.device, timeSec: r.time_sec, cycle: r.cycle, pid: r.public_id || r.player_id, cleared: r.cleared == null ? true : !!r.cleared, floor: r.best_floor == null ? TOP_FLOOR : r.best_floor }; }
   function warm() {}
   const BEST_KEY = 'ddulbbeong-halbae-v1-pb';
-  async function submit(rec, force) {
+  async function submit(rec, force, force2) {
     // clears get their own row; an unfinished climb keeps one 'progress' row per 회차 that is updated in place
     const id = rec.cleared === false ? 'prog-' + rec.cycle : 'r' + Date.now() + Math.random().toString(36).slice(2, 6);
     if (rec.cleared !== false) { try { localStorage.setItem(HB_SCORE_KEY, JSON.stringify(localAll().filter(r => r.id !== 'prog-' + rec.cycle))); } catch (_) {} }
@@ -3514,6 +3532,12 @@ const HBoard = (() => {
       const rpc = { p_player_id: hbPlayerId(), p_token: hbToken(), p_name: send.name, p_country: send.country, p_device: send.device, p_time_sec: send.timeSec, p_cycle: send.cycle, p_best_floor: send.cleared === false ? (send.floor || 1) : TOP_FLOOR, p_cleared: send.cleared !== false };
       let res = await withTimeout(fetch(root + 'rpc/submit_score', { method: 'POST', keepalive: true, headers: headers(), body: JSON.stringify(rpc) }), 8000);
       if (res && res.ok) { try { const id = await res.json(); if (id) localStorage.setItem(HB_PUB_KEY, String(id)); } catch (_) {} }
+      else if (res && !force2 && (res.status === 409 || res.status === 400) && /name_taken/.test(await res.text().catch(() => ''))) {
+        // someone else took this nickname meanwhile: keep it recognisable but unique, then send again
+        const nn = hbCleanName(send.name).slice(0, 11) + '#' + hbPlayerId().slice(-4);
+        const p = hbProfile || hbLoadProfile(); hbSaveProfile(nn, p ? p.country : send.country);
+        return submit(Object.assign({}, rec, { name: nn }), true, true);
+      }
       else if (res && res.status === 404) { // the security SQL has not been run yet: the old direct write
         const base = root + HB_SUPABASE.table + '?on_conflict=player_id';
         const opt = body => ({ method: 'POST', headers: Object.assign(headers(), { Prefer: 'resolution=merge-duplicates,return=minimal' }), body: JSON.stringify(body) });
@@ -3539,7 +3563,17 @@ const HBoard = (() => {
     }
     return { rows: localAll().slice().sort(hbCmp).slice(0, n), global: false };
   }
-  return { warm, submit, top, configured: on };
+  // true when nobody else on the board uses this nickname (unknown / offline counts as free)
+  async function nameFree(name) {
+    if (!on()) return true;
+    try {
+      const root = HB_SUPABASE.url.replace(/\/$/, '') + '/rest/v1/';
+      const res = await withTimeout(fetch(root + 'rpc/name_available', { method: 'POST', headers: headers(), body: JSON.stringify({ p_name: name, p_player_id: hbPlayerId() }) }), 5000);
+      if (!res || !res.ok) return true;
+      return (await res.json()) !== false;
+    } catch (_) { return true; }
+  }
+  return { warm, submit, top, nameFree, configured: on };
 })();
 
 function hbBaseRec() {
@@ -3579,9 +3613,19 @@ function hbOpenProfile(first) {
   hbSubFrom = document.activeElement; $('profScreen').hidden = false;
   setTimeout(() => { try { $('profName').focus(); } catch (_) {} }, 0);
 }
-function hbCommitProfile() {
+let hbProfBusy = false;
+async function hbCommitProfile() {
+  if (hbProfBusy) return;
   const nm = hbCleanName($('profName').value);
-  if (hbBadName(nm)) { $('profErr').hidden = false; $('profErr').textContent = T('prof.bad'); try { $('profName').focus(); } catch (_) {} return; }
+  const hbProfFail = k => { $('profErr').hidden = false; $('profErr').textContent = T(k); try { $('profName').focus(); } catch (_) {} };
+  if (hbBadName(nm)) { hbProfFail('prof.bad'); return; }
+  const prev = hbLoadProfile();
+  if (!prev || prev.name.toLowerCase() !== nm.toLowerCase()) {
+    hbProfBusy = true; $('profSave').disabled = true;
+    const free = await HBoard.nameFree(nm);
+    hbProfBusy = false; $('profSave').disabled = false;
+    if (!free) { hbProfFail('prof.taken'); return; }
+  }
   $('profErr').hidden = true;
   hbSaveProfile(nm, $('profCountry').value);
   try { const a = JSON.parse(localStorage.getItem(HB_SCORE_KEY) || '[]'); let ch = false;
@@ -3720,7 +3764,7 @@ function updateHud(dt) {
   const cb = S.cycle || 1, ck = cb + LANG;
   if (ck !== hudCycKey) { hudCycKey = ck; if (cb > 1) { hud.cycle.hidden = false; hud.cycle.textContent = T('cyc.badge', { n: cb }); hud.cycle.classList.toggle('g3', cb >= 3); } else hud.cycle.hidden = true; }
   const m = heightM();
-  if (S.running) { S.best = Math.max(S.best, m); if (!S.won) hbProgTick(); }
+  if (S.running) { S.best = Math.max(S.best, m); if (!S.won) hbProgTick(); hbRwTick(); }
   const fl = currentFloor();
   const vy = (S.B.y - lastHudY) / Math.max(dt, 1e-3); lastHudY = S.B.y;
   arrowHold -= dt;
@@ -3738,6 +3782,58 @@ function updateHud(dt) {
   hud.pNow.style.top = (100 - clamp(m / TOTAL_M, 0, 1) * 100) + '%';
   hud.pBest.style.top = (100 - clamp(S.best / TOTAL_M, 0, 1) * 100) + '%';
 }
+
+// ---------- app only: watch an ad (or own the no-ads pack) to go back to where a big fall started ----------
+// the game only asks window.HbNative (added by the Android app); the web and PC versions never show this
+const HB_RW_MIN = 480; // offer it after falling 3 floors or more
+const hbRw = { cp: null, target: null, until: 0, busy: false, el: null };
+function hbRwBtn() {
+  if (hbRw.el) return hbRw.el;
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'call rw-btn'; b.id = 'bRewind'; b.hidden = true;
+  b.innerHTML = '<span class="dot"></span><span id="bRewindL"></span>';
+  b.onclick = hbRwUse; document.body.appendChild(b);
+  return (hbRw.el = b);
+}
+function hbRwHide() { if (hbRw.el) hbRw.el.hidden = true; hbRw.target = null; }
+function hbRwTick() {
+  if (!window.HbNative || S.won) return;
+  const B = S.B;
+  // remember the last spot he stood still on; while falling this stays where the fall began
+  if (!S.airborne && Math.abs(S.V.x) + Math.abs(S.V.y) < 40) hbRw.cp = { x: B.x, y: B.y, ox: S.O.x, oy: S.O.y };
+  if (hbRw.target && !hbRw.busy && (performance.now() > hbRw.until || B.y < hbRw.target.y + 160)) hbRwHide();
+}
+function hbRwOffer() {
+  if (!window.HbNative || !hbRw.cp || hbRw.busy || S.won) return;
+  if (S.B.y - hbRw.cp.y < HB_RW_MIN) return;
+  hbRw.target = Object.assign({}, hbRw.cp); hbRw.until = performance.now() + 15000;
+  const fl = Math.min(TOP_FLOOR, Math.floor(Math.max(0, -(hbRw.target.y + R)) / UNIT_PER_M / 3.2) + 1); // same as the HUD
+  hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl });
+  hbRw.el.hidden = false;
+}
+function hbNoAdsOwned() { return hbOwnRainbow; }
+async function hbRwUse() {
+  const t = hbRw.target; if (!t || hbRw.busy) return;
+  hbRw.busy = true; sfx.click(); hbRw.el.disabled = true;
+  let ok = hbNoAdsOwned();
+  if (!ok) { try { ok = await window.HbNative.rewardAd(); } catch (_) { ok = false; } }
+  hbRw.busy = false; hbRw.el.disabled = false; hbRwHide();
+  if (!ok) { say(T('rw.fail'), 2.6); return; }
+  S.B.x = t.x; S.B.y = t.y; S.V.x = S.V.y = 0; S.O.x = t.ox; S.O.y = t.oy; aim.x = S.O.x; aim.y = S.O.y;
+  S.stuck = false; S.stuckPoly = null;
+  resolve(S.B, R, null);
+  S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y; resolve(S.tip, TR, null);
+  S.airborne = false; S.topY = S.B.y; cam.x = S.B.x; cam.y = S.B.y;
+  burst('dust', S.B.x, S.B.y + R, 10, { angle: -Math.PI / 2, spread: Math.PI * 1.4, speed: 120, size: 7, life: 0.8, jx: 30 });
+  say(T('rw.done'), 2.8);
+}
+// called by the app when a purchase arrives or is restored
+window.hbGrant = key => {
+  if (key !== 'noads') return;
+  hbOwnRainbow = true; try { localStorage.setItem('ddulbbeong-halbae-noads', '1'); } catch (_) {}
+  if (!$('setScreen').hidden) hbSyncSettings();
+};
+window.hbOwned = keys => { if (keys && keys.includes('noads') && !hbOwnRainbow) window.hbGrant('noads'); };
 
 // ---------- save ----------
 const KEY = 'ddulbbeong-halbae-v1';
@@ -3932,6 +4028,10 @@ function hbSyncSettings() {
   hbShowVol();
   hbSeg('sGfx', hbOpt.gfx); hbSeg('sFx', hbOpt.fx ? 'on' : 'off'); hbSeg('sFs', hbIsFs() ? 'on' : 'off');
   $('sFsRow').hidden = !hbFsOk;
+  const hbApp = !!window.HbNative, hbCanBuy = hbApp && window.HbNative.billing;
+  $('sRbRow').hidden = !hbOwnRainbow; hbSeg('sRb', hbWearRainbow ? 'on' : 'off');
+  $('sShop').hidden = !hbCanBuy || hbOwnRainbow;
+  if (hbCanBuy && !hbOwnRainbow) { const pr = window.HbNative.price && window.HbNative.price(); $('bBuyL').textContent = T('shop.buy', { p: pr || '₩3,300' }); }
   $('sNote').textContent = T(hbOpt.gfx === 'low' ? 's.noteLow' : hbOpt.gfx === 'high' ? 's.noteHigh' : hbAutoLowered ? 's.noteLowered' : 's.noteAuto');
 }
 let hbSubFrom = null; // the element to give focus back to when a settings/credits panel closes
@@ -3952,6 +4052,23 @@ for (const id of ['pMusic', 'sMusic']) { const el = $(id); if (el) { el.addEvent
 for (const b of $('sGfx').querySelectorAll('button')) b.onclick = () => {
   hbOpt.gfx = b.dataset.v; if (hbOpt.gfx === 'auto') { hbAutoLowered = false; hbOpt.autoLow = false; } // picking auto again gives this device a fresh test
   saveOpts(); hbApplyGfx(); hbSyncSettings(); sfx.click();
+};
+for (const b of $('sRb').querySelectorAll('button')) b.onclick = () => { hbWearRainbow = b.dataset.v === 'on'; try { localStorage.setItem('ddulbbeong-halbae-rainbow', hbWearRainbow ? '1' : '0'); } catch (_) {} hbSyncSettings(); sfx.click(); };
+$('bBuy').onclick = async () => {
+  if (!window.HbNative || $('bBuy').disabled) return;
+  sfx.click(); $('bBuy').disabled = true;
+  let ok = false; try { ok = await window.HbNative.buy('noads'); } catch (_) {}
+  $('bBuy').disabled = false;
+  if (!ok && !hbOwnRainbow) { $('sShopNote').textContent = T('shop.fail'); setTimeout(() => { $('sShopNote').textContent = T('shop.note'); }, 4000); }
+  hbSyncSettings();
+};
+$('bRestore').onclick = async () => {
+  if (!window.HbNative) return;
+  sfx.click(); $('sShopNote').textContent = T('shop.restoring');
+  let keys = []; try { keys = await window.HbNative.restore(); } catch (_) {}
+  window.hbOwned(keys);
+  $('sShopNote').textContent = T(hbOwnRainbow ? 'shop.restored' : 'shop.none');
+  setTimeout(() => { $('sShopNote').textContent = T('shop.note'); hbSyncSettings(); }, 3000);
 };
 for (const b of $('sFx').querySelectorAll('button')) b.onclick = () => { hbOpt.fx = b.dataset.v === 'on'; saveOpts(); hbSyncSettings(); sfx.click(); if (hbOpt.fx) hbRumble(0.5, 120); };
 for (const b of $('sFs').querySelectorAll('button')) b.onclick = () => { hbSetFs(b.dataset.v === 'on'); sfx.click(); };
