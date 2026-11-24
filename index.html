@@ -3785,8 +3785,10 @@ function updateHud(dt) {
 
 // ---------- app only: watch an ad (or own the no-ads pack) to go back to where a big fall started ----------
 // the game only asks window.HbNative (added by the Android app); the web and PC versions never show this
-const HB_RW_MIN = 480; // offer it after falling 3 floors or more
-const hbRw = { cp: null, target: null, until: 0, busy: false, el: null };
+const HB_RW_MIN = 1600; // offer it after falling 10 floors or more
+const HB_RW_SHOW = 8000, HB_RW_GAP = 180000; // the button stays 8 s, then rests 3 min before it can show again
+const hbRw = { cp: null, target: null, until: 0, busy: false, el: null, next: 0, still: 0 };
+if (HB_DEBUG) window.__hbRw = hbRw;
 function hbRwBtn() {
   if (hbRw.el) return hbRw.el;
   const b = document.createElement('button');
@@ -3799,14 +3801,16 @@ function hbRwHide() { if (hbRw.el) hbRw.el.hidden = true; hbRw.target = null; }
 function hbRwTick() {
   if (!window.HbNative || S.won) return;
   const B = S.B;
-  // remember the last spot he stood still on; while falling this stays where the fall began
-  if (!S.airborne && Math.abs(S.V.x) + Math.abs(S.V.y) < 40) hbRw.cp = { x: B.x, y: B.y, ox: S.O.x, oy: S.O.y };
+  // remember the last spot he stayed still on (standing, or resting on the planted plunger); while falling it stays where the fall began
+  const now = performance.now();
+  if (Math.abs(S.V.x) + Math.abs(S.V.y) < 40) { if (!hbRw.still) hbRw.still = now; if (now - hbRw.still > 400) hbRw.cp = { x: B.x, y: B.y, ox: S.O.x, oy: S.O.y }; }
+  else hbRw.still = 0;
   if (hbRw.target && !hbRw.busy && (performance.now() > hbRw.until || B.y < hbRw.target.y + 160)) hbRwHide();
 }
 function hbRwOffer() {
   if (!window.HbNative || !hbRw.cp || hbRw.busy || S.won) return;
-  if (S.B.y - hbRw.cp.y < HB_RW_MIN) return;
-  hbRw.target = Object.assign({}, hbRw.cp); hbRw.until = performance.now() + 15000;
+  if (S.B.y - hbRw.cp.y < HB_RW_MIN || performance.now() < hbRw.next) return;
+  hbRw.target = Object.assign({}, hbRw.cp); hbRw.until = performance.now() + HB_RW_SHOW; hbRw.next = performance.now() + HB_RW_GAP;
   const fl = Math.min(TOP_FLOOR, Math.floor(Math.max(0, -(hbRw.target.y + R)) / UNIT_PER_M / 3.2) + 1); // same as the HUD
   hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl });
   hbRw.el.hidden = false;
