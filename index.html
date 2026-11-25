@@ -3521,19 +3521,22 @@ const HBoard = (() => {
   function warm() {}
   const BEST_KEY = 'ddulbbeong-halbae-v1-pb';
   async function submit(rec, force, force2) {
-    if (!force2) noteRewind(0);
     // clears get their own row; an unfinished climb keeps one 'progress' row per 회차 that is updated in place
     const id = rec.cleared === false ? 'prog-' + rec.cycle : 'r' + Date.now() + Math.random().toString(36).slice(2, 6);
     if (rec.cleared !== false) { try { localStorage.setItem(HB_SCORE_KEY, JSON.stringify(localAll().filter(r => r.id !== 'prog-' + rec.cycle))); } catch (_) {} }
     localPut(Object.assign({}, rec, { id, mine: true, pid: hbPlayerId() }));
     if (!on()) return;
     let best = null; try { best = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch (_) {}
-    if (!force && best && hbCmp(rec, best) >= 0) return; // the server keeps your best, not your latest
-    const send = force && best && hbCmp(rec, best) > 0 ? Object.assign({}, rec, best) : rec; // a name change re-sends the best with the new name
+    const cmp = best ? hbCmp(rec, best) : -1;
+    const pureTie = best && cmp === 0 && rec.cleared !== false && rec.rewinds === 0 && best.rewinds !== 0;
+    if (!force && best && cmp >= 0 && !pureTie) return;
+    // Keep rewind evidence bound to the submitted record, including forced nickname updates.
+    const useBest = force && best && (cmp > 0 || (cmp === 0 && !pureTie && best.rewinds === 0));
+    const send = useBest ? Object.assign({}, rec, best, { rewinds: best.rewinds ?? null }) : rec;
     try {
       const root = HB_SUPABASE.url.replace(/\/$/, '') + '/rest/v1/';
-      const rpc = { p_player_id: hbPlayerId(), p_token: hbToken(), p_name: send.name, p_country: send.country, p_device: send.device, p_time_sec: send.timeSec, p_cycle: send.cycle, p_best_floor: send.cleared === false ? (send.floor || 1) : TOP_FLOOR, p_cleared: send.cleared !== false };
-      let res = await withTimeout(fetch(root + 'rpc/submit_score', { method: 'POST', keepalive: true, headers: headers(), body: JSON.stringify(rpc) }), 8000);
+      const rpc = { p_player_id: hbPlayerId(), p_token: hbToken(), p_name: send.name, p_country: send.country, p_device: send.device, p_time_sec: send.timeSec, p_cycle: send.cycle, p_best_floor: send.cleared === false ? (send.floor || 1) : TOP_FLOOR, p_cleared: send.cleared !== false, p_rewinds: Number.isInteger(send.rewinds) && send.rewinds >= 0 ? send.rewinds : null };
+      let res = await withTimeout(fetch(root + 'rpc/submit_score_v2', { method: 'POST', keepalive: true, headers: headers(), body: JSON.stringify(rpc) }), 8000);
       if (res && res.ok) { try { const id = await res.json(); if (id) localStorage.setItem(HB_PUB_KEY, String(id)); } catch (_) {} }
       else if (res && !force2 && (res.status === 409 || res.status === 400) && /name_taken/.test(await res.text().catch(() => ''))) {
         // someone else took this nickname meanwhile: keep it recognisable but unique, then send again
@@ -3541,13 +3544,8 @@ const HBoard = (() => {
         const p = hbProfile || hbLoadProfile(); hbSaveProfile(nn, p ? p.country : send.country);
         return submit(Object.assign({}, rec, { name: nn }), true, true);
       }
-      else if (res && res.status === 404) { // the security SQL has not been run yet: the old direct write
-        const base = root + HB_SUPABASE.table + '?on_conflict=player_id';
-        const opt = body => ({ method: 'POST', headers: Object.assign(headers(), { Prefer: 'resolution=merge-duplicates,return=minimal' }), body: JSON.stringify(body) });
-        res = await withTimeout(fetch(base, opt(toRow(send))), 8000);
-        if (res && !res.ok && send.cleared !== false) res = await withTimeout(fetch(base, opt(toRow(send, true))), 8000);
-      }
-      if (res && res.ok) { try { localStorage.setItem(BEST_KEY, JSON.stringify({ cycle: send.cycle, timeSec: send.timeSec, cleared: send.cleared !== false, floor: send.floor || TOP_FLOOR })); } catch (_) {} }
+      // Do not fall back to legacy writes: they cannot preserve per-record rewind evidence.
+      if (res && res.ok) { try { localStorage.setItem(BEST_KEY, JSON.stringify({ cycle: send.cycle, timeSec: send.timeSec, cleared: send.cleared !== false, floor: send.floor || TOP_FLOOR, rewinds: rpc.p_rewinds })); } catch (_) {} }
     } catch (_) {}
   }
   async function top(n) {
@@ -3605,7 +3603,7 @@ const HBoard = (() => {
 
 function hbBaseRec() {
   const p = hbProfile || hbLoadProfile();
-  return { name: p ? p.name : T('lb.anon') + '#' + hbPlayerId().slice(-4), country: p ? p.country : hbDetectCountry(), device: hbDeviceType(), timeSec: Math.floor(S.time), cycle: S.cycle || 1, date: Date.now() };
+  return { name: p ? p.name : T('lb.anon') + '#' + hbPlayerId().slice(-4), country: p ? p.country : hbDetectCountry(), device: hbDeviceType(), timeSec: Math.floor(S.time), cycle: S.cycle || 1, date: Date.now(), rewinds: Number.isInteger(S.rw) && S.rw >= 0 ? S.rw : null };
 }
 function hbRecordWin() { HBoard.submit(Object.assign(hbBaseRec(), { cleared: true, floor: TOP_FLOOR })); hbProg.pending = false; }
 // climbing progress: the highest floor reached so far, sent when it rises (at most every 20 s) and when the game pauses
@@ -3883,7 +3881,7 @@ async function hbRwUse() {
   hbRw.busy = false; hbRw.el.disabled = false; hbRwHide();
   if (epoch !== hbRw.epoch || S.won) return;
   if (!ok || !hbRwConsume()) { say(T('rw.fail'), 2.6); return; }
-  S.rw = (S.rw || 0) + 1; HBoard.noteRewind(S.cycle || 1);
+  S.rw = (S.rw || 0) + 1;
   S.B.x = t.x; S.B.y = t.y; S.V.x = S.V.y = 0; S.O.x = t.ox; S.O.y = t.oy; aim.x = S.O.x; aim.y = S.O.y;
   S.stuck = false; S.stuckPoly = null; S.holding = false; touchId = null; noStick.poly = null;
   resolve(S.B, R, null);
