@@ -3813,10 +3813,36 @@ function updateHud(dt) {
 
 // ---------- app only: watch an ad (or own the no-ads pack) to go back to where a big fall started ----------
 // the game only asks window.HbNative (added by the Android app); the web and PC versions never show this
-const HB_RW_MIN = 1600; // offer it after falling 10 floors or more
+const HB_RW_MIN = 3 * FLOOR_U; // offer it after falling three floors or more
 const HB_RW_SHOW = 8000, HB_RW_GAP = 180000; // the button stays 8 s, then rests 3 min before it can show again
-const HB_RW_MAX = 3, HB_RW_TOPFL = 30; // 3 rewinds per run, and none for falls that start above the 30th floor
-const hbRw = { cp: null, target: null, until: 0, busy: false, el: null, next: 0, still: 0 };
+const HB_RW_MAX = 3, HB_RW_TOPFL = 30; // three rewinds per local calendar day; none above floor 30
+const HB_RW_DAY_KEY = 'ddulbbeong-halbae-rewind-daily-v1';
+function hbRwDay(now = new Date()) {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+function hbRwDaily(now = new Date()) {
+  const day = hbRwDay(now);
+  try {
+    const raw = localStorage.getItem(HB_RW_DAY_KEY);
+    if (!raw) return { day, used: 0 };
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved.day !== 'string' || !Number.isInteger(saved.used) || saved.used < 0 || saved.used > HB_RW_MAX) return null;
+    return saved.day >= day ? saved : { day, used: 0 };
+  } catch (_) { return null; }
+}
+function hbRwLeft() {
+  const daily = hbRwDaily();
+  return daily ? HB_RW_MAX - daily.used : 0;
+}
+function hbRwConsume() {
+  const daily = hbRwDaily();
+  if (!daily || daily.used >= HB_RW_MAX) return false;
+  try {
+    localStorage.setItem(HB_RW_DAY_KEY, JSON.stringify({ day: daily.day, used: daily.used + 1 }));
+    return true;
+  } catch (_) { return false; }
+}
+const hbRw = { cp: null, target: null, until: 0, busy: false, el: null, next: 0, still: 0, epoch: 0 };
 if (HB_DEBUG) window.__hbRw = hbRw;
 function hbRwBtn() {
   if (hbRw.el) return hbRw.el;
@@ -3828,37 +3854,41 @@ function hbRwBtn() {
 }
 function hbRwHide() { if (hbRw.el) hbRw.el.hidden = true; hbRw.target = null; }
 function hbRwTick() {
-  if (!window.HbNative || S.won) return;
+  if (!window.HbNative || S.won || hbRw.busy) return;
   const B = S.B;
   // remember the last spot he stayed still on (standing, or resting on the planted plunger); while falling it stays where the fall began
   const now = performance.now();
-  if (Math.abs(S.V.x) + Math.abs(S.V.y) < 40) { if (!hbRw.still) hbRw.still = now; if (now - hbRw.still > 400) hbRw.cp = { x: B.x, y: B.y, ox: S.O.x, oy: S.O.y }; }
+  if ((S.stuck || bodyInfo.ground) && Math.abs(S.V.x) + Math.abs(S.V.y) < 40) { if (!hbRw.still) hbRw.still = now; if (now - hbRw.still > 400) hbRw.cp = { x: B.x, y: B.y, ox: S.O.x, oy: S.O.y }; }
   else hbRw.still = 0;
   if (hbRw.target && !hbRw.busy && (performance.now() > hbRw.until || B.y < hbRw.target.y + 160)) hbRwHide();
 }
 function hbRwOffer() {
   if (!window.HbNative || !hbRw.cp || hbRw.busy || S.won) return;
-  if (S.B.y - hbRw.cp.y < HB_RW_MIN || performance.now() < hbRw.next || (S.rw || 0) >= HB_RW_MAX) return;
+  const left = hbRwLeft();
+  if (S.B.y - hbRw.cp.y < HB_RW_MIN || performance.now() < hbRw.next || left <= 0) return;
   const fl = Math.min(TOP_FLOOR, Math.floor(Math.max(0, -(hbRw.cp.y + R)) / UNIT_PER_M / 3.2) + 1); // same as the HUD
   if (fl > HB_RW_TOPFL) return; // the last 20 floors are climbed for real
   hbRw.target = Object.assign({}, hbRw.cp); hbRw.until = performance.now() + HB_RW_SHOW; hbRw.next = performance.now() + HB_RW_GAP;
-  hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl, k: HB_RW_MAX - (S.rw || 0) });
+  hbRwBtn(); $('bRewindL').textContent = T(hbNoAdsOwned() ? 'rw.free' : 'rw.ad', { n: fl, k: left });
   hbRw.el.hidden = false;
 }
 function hbNoAdsOwned() { return hbOwnRainbow; }
 async function hbRwUse() {
-  const t = hbRw.target; if (!t || hbRw.busy) return;
+  const t = hbRw.target; if (!t || hbRw.busy || !S.running || S.won) return;
+  if (performance.now() > hbRw.until || hbRwLeft() <= 0) { hbRwHide(); return; }
+  const epoch = hbRw.epoch;
   hbRw.busy = true; sfx.click(); hbRw.el.disabled = true;
   let ok = hbNoAdsOwned();
   if (!ok) { try { ok = await window.HbNative.rewardAd(); } catch (_) { ok = false; } }
   hbRw.busy = false; hbRw.el.disabled = false; hbRwHide();
-  if (!ok) { say(T('rw.fail'), 2.6); return; }
+  if (epoch !== hbRw.epoch || S.won) return;
+  if (!ok || !hbRwConsume()) { say(T('rw.fail'), 2.6); return; }
   S.rw = (S.rw || 0) + 1; HBoard.noteRewind(S.cycle || 1);
   S.B.x = t.x; S.B.y = t.y; S.V.x = S.V.y = 0; S.O.x = t.ox; S.O.y = t.oy; aim.x = S.O.x; aim.y = S.O.y;
-  S.stuck = false; S.stuckPoly = null;
+  S.stuck = false; S.stuckPoly = null; S.holding = false; touchId = null; noStick.poly = null;
   resolve(S.B, R, null);
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y; resolve(S.tip, TR, null);
-  S.airborne = false; S.topY = S.B.y; cam.x = S.B.x; cam.y = S.B.y;
+  S.airborne = false; S.topY = S.B.y; whistled = false; hbRw.cp = null; hbRw.still = 0; cam.x = S.B.x; cam.y = S.B.y;
   burst('dust', S.B.x, S.B.y + R, 10, { angle: -Math.PI / 2, spread: Math.PI * 1.4, speed: 120, size: 7, life: 0.8, jx: 30 });
   say(T('rw.done'), 2.8); save();
 }
@@ -3888,6 +3918,7 @@ function loadSave() {
 
 // ---------- flow ----------
 function resetRun() {
+  hbRw.epoch++; hbRwHide(); hbRw.cp = null; hbRw.still = 0;
   S.B.x = START_X; S.B.y = -R; S.V.x = S.V.y = 0; S.O.x = 46; S.O.y = -66; aim.x = S.O.x; aim.y = S.O.y;
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y;
   S.stuck = false; S.stuckPoly = null; S.time = 0; S.falls = 0; S.rw = 0; S.won = false; S.seen = {}; S.airborne = false; S.topY = S.B.y; S.tilt = 0;
@@ -3895,6 +3926,7 @@ function resetRun() {
 }
 function restore(d) {
   if (!d || !d.B) return;
+  hbRw.epoch++; hbRwHide(); hbRw.cp = null; hbRw.still = 0;
   S.B.x = d.B.x; S.B.y = d.B.y; S.O.x = d.O.x; S.O.y = d.O.y; aim.x = S.O.x; aim.y = S.O.y;
   resolve(S.B, R, null); // the level may have changed since this was saved
   S.tip.x = S.B.x + PIVX + S.O.x; S.tip.y = S.B.y + PIVY + S.O.y; resolve(S.tip, TR, null);
@@ -4010,7 +4042,7 @@ window.addEventListener('keydown', e => {
 });
 // the app goes to the background (home button, other tab, locked phone): pause and go quiet
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (S.running) openPause(); else if (AC && AC.state === 'running') AC.suspend().catch(() => {}); }
+  if (document.hidden) { if (S.running && !hbRw.busy) openPause(); else if (AC && AC.state === 'running') AC.suspend().catch(() => {}); }
   else if (!paused && AC && AC.state === 'suspended') AC.resume().catch(() => {});
 });
 $('bLangTitle').onclick = () => { initAudio(); sfx.click(); showLangPicker(null); };
@@ -4305,7 +4337,7 @@ let last = performance.now(), saveT = 0, wasGust = false, sweatT = 0, gruntCd = 
 function frame(now) {
   let dt = (now - last) / 1000; last = now; dt = clamp(dt, 0, 1 / 20);
   hbPerfTick(); hbPadTick(dt);
-  if (S.running) {
+  if (S.running && !hbRw.busy && !document.hidden) {
     updateAim();
     const n = Math.max(1, Math.ceil(dt * 480)), h = dt / n;
     for (let i = 0; i < n; i++) step(h);
